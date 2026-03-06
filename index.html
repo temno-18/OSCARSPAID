@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Nuggets Portal v6</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+:root{--accent:#22c55e;}
+
+body{
+background:#000;
+color:white;
+font-family:Arial;
+overflow:hidden;
+}
+
+.sidebar{
+width:250px;
+background:#050505;
+border-right:1px solid rgba(255,255,255,0.1);
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.1);
+transition:0.25s;
+cursor:pointer;
+}
+
+.card:hover{
+transform:translateY(-4px);
+border-color:var(--accent);
+}
+
+iframe{
+width:100%;
+height:80vh;
+border:none;
+background:black;
+}
+
+.star{
+position:absolute;
+width:3px;
+height:3px;
+background:white;
+border-radius:50%;
+animation:float linear infinite;
+}
+
+@keyframes float{
+0%{transform:translateY(110vh)}
+100%{transform:translateY(-20vh)}
+}
+
+.hidden{display:none}
+</style>
+
+</head>
+
+<body>
+
+<div id="stars"></div>
+
+<!-- LOGIN -->
+
+<div id="login" class="h-screen flex items-center justify-center">
+
+<div class="card p-10 rounded-xl text-center w-80">
+
+<h1 class="text-3xl mb-6">Nuggets Portal</h1>
+
+<input id="keyInput" placeholder="Enter key"
+class="w-full p-3 bg-black border border-white rounded mb-4">
+
+<button onclick="login()"
+class="bg-[var(--accent)] text-black w-full p-3 rounded">
+
+Unlock </button>
+
+<p id="error" class="text-red-400 mt-3"></p>
+
+</div>
+</div>
+
+<!-- APP -->
+
+<div id="app" class="hidden flex h-screen">
+
+<!-- SIDEBAR -->
+
+<div class="sidebar p-6 flex flex-col gap-3">
+
+<h1 class="text-xl font-bold mb-4">Nuggets</h1>
+
+<button onclick="tab('home')" class="card p-3 rounded">Home</button> <button onclick="tab('games')" class="card p-3 rounded">Games</button> <button onclick="tab('browser')" class="card p-3 rounded">Web Viewer</button> <button onclick="tab('ai')" class="card p-3 rounded">AI Tools</button> <button onclick="tab('music')" class="card p-3 rounded">Music</button> <button onclick="tab('settings')" class="card p-3 rounded">Settings</button>
+
+<button id="adminBtn" onclick="tab('admin')" class="card p-3 rounded hidden">
+Admin
+</button>
+
+</div>
+
+<!-- CONTENT -->
+
+<div class="flex-1 overflow-y-auto p-8 space-y-6">
+
+<!-- HOME -->
+
+<div id="home">
+<h1 class="text-4xl mb-3">Welcome</h1>
+<p class="text-white/70">All apps run inside this portal.</p>
+</div>
+
+<!-- GAMES -->
+
+<div id="games" class="hidden">
+
+<h1 class="text-3xl mb-5">Games</h1>
+
+<div class="grid grid-cols-3 gap-4">
+
+<div onclick="launch('https://play2048.co/')" class="card p-4 rounded">2048</div>
+<div onclick="launch('https://flappybird.io/')" class="card p-4 rounded">Flappy Bird</div>
+<div onclick="launch('https://snake.googlemaps.com/')" class="card p-4 rounded">Snake</div>
+<div onclick="launch('https://tetris.com/play-tetris')" class="card p-4 rounded">Tetris</div>
+<div onclick="launch('https://pacman.live/')" class="card p-4 rounded">Pacman</div>
+
+</div>
+
+</div>
+
+<!-- WEB VIEWER -->
+
+<div id="browser" class="hidden">
+
+<h1 class="text-3xl mb-4">Web Viewer</h1>
+
+<div class="flex gap-2 mb-4">
+
+<input id="urlBox" placeholder="Enter website URL"
+class="flex-1 p-3 bg-black border border-white rounded">
+
+<button onclick="openURL()"
+class="bg-[var(--accent)] px-4 py-2 rounded text-black">
+
+Open </button>
+
+</div>
+
+<iframe id="browserFrame"></iframe>
+
+</div>
+
+<!-- AI -->
+
+<div id="ai" class="hidden">
+
+<h1 class="text-3xl mb-5">AI Tools</h1>
+
+<div class="grid grid-cols-3 gap-4">
+
+<div onclick="launch('https://chat.openai.com')" class="card p-4 rounded">ChatGPT</div>
+<div onclick="launch('https://claude.ai')" class="card p-4 rounded">Claude</div>
+<div onclick="launch('https://perplexity.ai')" class="card p-4 rounded">Perplexity</div>
+
+</div>
+
+</div>
+
+<!-- MUSIC -->
+
+<div id="music" class="hidden">
+
+<h1 class="text-3xl mb-5">Music</h1>
+
+<div class="grid grid-cols-3 gap-4">
+
+<div onclick="launch('https://music.youtube.com')" class="card p-4 rounded">
+YouTube Music
+</div>
+
+<div onclick="launch('https://open.spotify.com')" class="card p-4 rounded">
+Spotify
+</div>
+
+</div>
+
+</div>
+
+<!-- SETTINGS -->
+
+<div id="settings" class="hidden">
+
+<h1 class="text-3xl mb-5">Theme Color</h1>
+
+<div class="flex gap-3">
+
+<div onclick="setTheme('#22c55e')" class="w-10 h-10 bg-green-500 rounded"></div>
+<div onclick="setTheme('#3b82f6')" class="w-10 h-10 bg-blue-500 rounded"></div>
+<div onclick="setTheme('#ef4444')" class="w-10 h-10 bg-red-500 rounded"></div>
+<div onclick="setTheme('#a855f7')" class="w-10 h-10 bg-purple-500 rounded"></div>
+
+</div>
+
+</div>
+
+<!-- ADMIN -->
+
+<div id="admin" class="hidden">
+
+<h1 class="text-3xl mb-4">Admin Panel</h1>
+
+<div class="flex gap-2 mb-4">
+
+<input id="newKey" placeholder="New key"
+class="p-3 bg-black border border-white rounded">
+
+<button onclick="addKey()" class="bg-green-500 px-4 py-2 rounded">
+Add
+</button>
+
+<button onclick="generateKey()" class="bg-blue-500 px-4 py-2 rounded">
+Generate
+</button>
+
+</div>
+
+<div id="keyList"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* LOGIN */
+
+const ADMIN_KEY="ADMIN-NUGGETS";
+
+let keys=JSON.parse(localStorage.getItem("keys"))||["PLAY123"];
+
+function login(){
+
+let k=document.getElementById("keyInput").value;
+
+if(k===ADMIN_KEY){unlock(true);return;}
+
+if(keys.includes(k)){unlock(false);return;}
+
+document.getElementById("error").innerText="Invalid key";
+}
+
+function unlock(admin){
+
+login.style.display="none";
+app.style.display="flex";
+
+if(admin)adminBtn.classList.remove("hidden");
+
+}
+
+/* TABS */
+
+function tab(name){
+
+document.querySelectorAll("#app .flex-1 > div").forEach(e=>e.classList.add("hidden"));
+
+document.getElementById(name).classList.remove("hidden");
+
+}
+
+/* WEB VIEWER */
+
+function openURL(){
+
+let url=document.getElementById("urlBox").value;
+
+if(!url.startsWith("http")) url="https://"+url;
+
+browserFrame.src=url;
+
+}
+
+/* GAME LAUNCH */
+
+function launch(url){
+
+tab("browser");
+
+browserFrame.src=url;
+
+}
+
+/* ADMIN */
+
+function addKey(){
+
+let k=newKey.value;
+
+if(!k)return;
+
+keys.push(k);
+
+saveKeys();
+
+}
+
+function generateKey(){
+
+let k="KEY-"+Math.random().toString(36).substring(2,8).toUpperCase();
+
+keys.push(k);
+
+saveKeys();
+
+}
+
+function deleteKey(i){
+
+keys.splice(i,1);
+
+saveKeys();
+
+}
+
+function saveKeys(){
+
+localStorage.setItem("keys",JSON.stringify(keys));
+
+renderKeys();
+
+}
+
+function renderKeys(){
+
+keyList.innerHTML="";
+
+keys.forEach((k,i)=>{
+
+let div=document.createElement("div");
+
+div.className="card p-3 rounded flex justify-between mb-2";
+
+div.innerHTML=`
+${k}
+<button onclick="deleteKey(${i})" class="text-red-400">Delete</button>
+`;
+
+keyList.appendChild(div);
+
+});
+
+}
+
+renderKeys();
+
+/* THEME */
+
+function setTheme(c){
+
+document.documentElement.style.setProperty("--accent",c);
+
+}
+
+/* STARS */
+
+function star(){
+
+let s=document.createElement("div");
+
+s.className="star";
+
+s.style.left=Math.random()*window.innerWidth+"px";
+
+s.style.animationDuration=(Math.random()*40+20)+"s";
+
+stars.appendChild(s);
+
+setTimeout(()=>s.remove(),60000);
+
+}
+
+for(let i=0;i<60;i++)star();
+
+</script>
+
+</body>
+</html>
