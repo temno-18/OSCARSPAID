@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+<title>Icebreaker v1</title>
+
+<meta charset="UTF-8">
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#111;
+color:white;
+}
+
+.screen{
+display:none;
+height:100vh;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+}
+
+.active{
+display:flex;
+}
+
+.login-box{
+background:#1e1e1e;
+padding:40px;
+border-radius:10px;
+text-align:center;
+}
+
+input{
+padding:10px;
+margin-top:10px;
+width:220px;
+}
+
+button{
+padding:10px 20px;
+margin-top:10px;
+cursor:pointer;
+border:none;
+background:#333;
+color:white;
+}
+
+button:hover{
+background:#444;
+}
+
+#announcement{
+position:fixed;
+top:0;
+width:100%;
+background:#ff4444;
+text-align:center;
+padding:10px;
+display:none;
+z-index:999;
+}
+
+.site{
+padding-top:60px;
+text-align:center;
+}
+
+.admin-panel{
+background:#1e1e1e;
+padding:30px;
+border-radius:10px;
+}
+
+textarea{
+width:300px;
+height:120px;
+padding:10px;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+<body>
+
+<div id="announcement"></div>
+
+<!-- LOGIN -->
+
+<div id="login" class="screen active">
+
+<div class="login-box">
+
+<h1>Icebreaker v1</h1>
+
+<p>Enter Access Key</p>
+
+<input id="keyInput" type="password" placeholder="Access Key">
+
+<br>
+
+<button onclick="login()">Enter</button>
+
+<p id="loginMsg"></p>
+
+</div>
+
+</div>
+
+<!-- MAIN SITE -->
+
+<div id="site" class="screen">
+
+<div class="site">
+
+<h1>Icebreaker v1</h1>
+
+<p>Welcome to the site.</p>
+
+<button onclick="logout()">Logout</button>
+
+<hr>
+
+<h2>Games Section</h2>
+
+<p>This is where your MonkeyGG games list would go.</p>
+
+</div>
+
+</div>
+
+<!-- ADMIN PANEL -->
+
+<div id="admin" class="screen">
+
+<div class="admin-panel">
+
+<h1>Icebreaker v1 Admin Panel</h1>
+
+<p>Send Announcement</p>
+
+<textarea id="adminMessage" placeholder="Message to all users..."></textarea>
+
+<br>
+
+<button onclick="sendAnnouncement()">Send</button>
+
+<button onclick="clearAnnouncement()">Clear</button>
+
+<button onclick="logout()">Logout</button>
+
+</div>
+
+</div>
+
+<script>
+
+const USER_KEY = "icebreaker";
+const ADMIN_KEY = "icebreaker-admin";
+
+function show(screen){
+
+document.querySelectorAll(".screen").forEach(s=>{
+s.classList.remove("active")
+})
+
+document.getElementById(screen).classList.add("active")
+
+}
+
+function login(){
+
+let key=document.getElementById("keyInput").value
+
+if(key===USER_KEY){
+
+show("site")
+
+}
+
+else if(key===ADMIN_KEY){
+
+show("admin")
+
+}
+
+else{
+
+document.getElementById("loginMsg").innerText="Invalid key"
+
+}
+
+}
+
+function logout(){
+
+show("login")
+
+}
+
+function sendAnnouncement(){
+
+let msg=document.getElementById("adminMessage").value
+
+localStorage.setItem("announcement",msg)
+
+displayAnnouncement()
+
+alert("Announcement sent")
+
+}
+
+function clearAnnouncement(){
+
+localStorage.removeItem("announcement")
+
+document.getElementById("announcement").style.display="none"
+
+}
+
+function displayAnnouncement(){
+
+let msg=localStorage.getItem("announcement")
+
+if(msg){
+
+let banner=document.getElementById("announcement")
+
+banner.innerText=msg
+
+banner.style.display="block"
+
+}
+
+}
+
+displayAnnouncement()
+
+</script>
+
+</body>
+</html>
